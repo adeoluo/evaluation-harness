@@ -1,88 +1,131 @@
 <h1 align="center">Evaluation Harness</h1>
 
 <p align="center">
-  <em>A principled, from-scratch evaluation and benchmarking framework for large language models and agents</em>
+  <em>A principled, from-scratch evaluation and benchmarking framework for large language models and agents.</em>
 </p>
 
 <p align="center">
-  <a href="../../actions"><img alt="CI" src="https://img.shields.io/badge/CI-passing-brightgreen"></a>
-  <img alt="Coverage" src="https://img.shields.io/badge/coverage-90%25-brightgreen">
-  <img alt="Python" src="https://img.shields.io/badge/python-3.11+-blue">
+  <a href="https://github.com/adeoluo/evaluation-harness/actions/workflows/ci.yml"><img alt="Continuous integration" src="https://github.com/adeoluo/evaluation-harness/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="Coverage" src="https://img.shields.io/badge/coverage-93%25-brightgreen">
+  <img alt="Python" src="https://img.shields.io/badge/python-3.11%20%7C%203.12-blue">
+  <img alt="Type checked" src="https://img.shields.io/badge/mypy-strict-blue">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
-  <a href="DEMONSTRATION_URL"><img alt="Demonstration" src="https://img.shields.io/badge/demonstration-live-6366F1"></a>
 </p>
 
 ---
 
 ## Motivation
 
-What problem does this solve, and why does it matter? What's the insight or hard part?
-Who is this for? (2 - 4 sentences - lead with the "so what".)
+A single accuracy number is not a result - its uncertainty is. Most model comparisons
+report one figure with no confidence interval, no baseline, and no check that the test
+set leaked into training. This framework treats evaluation as a measurement discipline:
+every metric ships with a **bootstrap confidence interval**, every task runs against a
+**baseline**, and every benchmark can be scanned for **contamination**.
+
+It is built from first principles (no evaluation-framework dependency) around five small,
+composable abstractions, and it runs **fully offline** so results are reproducible and
+continuous integration is hermetic. Frontier-provider adapters are optional add-ons.
 
 ## Architecture
 
 <p align="center">
-  <img src="docs/architecture/architecture.svg" alt="System architecture" width="760">
+  <img src="docs/architecture/architecture.svg" alt="System architecture" width="860">
 </p>
 
-One paragraph walking through the diagram: the request path, the core components, the
-data stores, and where the model sits. Link to [ADRs](docs/adr/) for key decisions.
+A **Runner** executes a **Model** over a **Task** (examples plus a **Grader**), timing
+and scoring each example. Per-example scores are aggregated by the **bootstrap
+statistics** layer into a mean with a confidence interval, then rendered as a text table
+or JSON. A **contamination** scan independently checks task examples against a reference
+corpus. Models and tasks are produced by small **registries**, so the command-line
+interface stays declarative. See the [architecture decision records](docs/adr/) for the
+reasoning behind key choices.
 
 ## Results
 
-> Every claim is backed by a number. Reproduce with `make evaluation`.
+> Reproduce with `make evaluation`. Scores are mean +/- 95% bootstrap confidence interval.
 
-| Metric | This project | Baseline | SOTA / reference |
-|---|---:|---:|---:|
-| Primary metric (↑) | **0.00** | 0.00 | 0.00 |
-| Latency p95 (ms, ↓) | **0** | 0 | - |
-| Cost / 1k req ($, ↓) | **0.00** | 0.00 | - |
+| Task | Model | Accuracy (95% CI) | N |
+|---|---|---:|---:|
+| arithmetic | `arithmetic-solver` | **100.0% +/- 0.0%** | 60 |
+| arithmetic | `constant-zero` (baseline) | 0.0% +/- 0.0% | 60 |
+| sentiment | `keyword-sentiment` | **91.7% +/- 7.3%** | 48 |
+| sentiment | majority-class (baseline) | 50.0% +/- 14.6% | 48 |
 
-Numbers are mean ± 95% confidence interval over N seeds. Full report: [`docs/EVALUATION_REPORT.md`](docs/EVALUATION_REPORT.md).
-
-<p align="center"><img src="docs/architecture/demonstration.gif" alt="Demonstration" width="640"></p>
+The numbers demonstrate the framework's central promise: it cleanly separates a real
+solver from a weak baseline, and the lexicon sentiment model's visible interval reflects
+its genuine errors on the negation examples in the benchmark.
 
 ## Quickstart
 
 ```bash
-git clone <repository> && cd Evaluation Harness
-cp .env.example .env         # add your keys
-make setup                   # install dependencies + pre-commit
-make test                    # run the test suite
-make run                     # run the application entrypoint
+git clone https://github.com/adeoluo/evaluation-harness.git && cd evaluation-harness
+make setup                    # install dependencies + pre-commit hooks
+make all                      # lint + type-check + test
+
+# list built-in tasks and models
+uv run python -m evaluation_harness list
+
+# evaluate a model on one or more tasks
+uv run python -m evaluation_harness run --model keyword-sentiment --task sentiment
+uv run python -m evaluation_harness run \
+    --model arithmetic-solver --task arithmetic --json report.json
 ```
 
-Or with Docker:
+Evaluate a frontier model by installing its optional extra and setting an API key:
 
 ```bash
-docker compose up --build
+uv sync --extra openai      # or: --extra anthropic
+export OPENAI_API_KEY=...
 ```
 
 ## Design decisions
 
-- **Why X over Y** - short rationale, link to [ADR](docs/adr/).
-- **Key tradeoff** - what you optimized for and what you gave up.
+- **Bootstrap intervals, not the normal approximation.** Evaluation scores are bounded
+  and often bimodal (pass/fail), where the normal standard error is unreliable on small
+  benchmarks. Resampling is reproducible under a fixed seed.
+  ([ADR-0002](docs/adr/0002-bootstrap-confidence-intervals.md))
+- **Containment, not Jaccard, for contamination.** An example can be fully contained in a
+  much larger corpus; symmetric similarity would wash that signal out.
+  ([ADR-0003](docs/adr/0003-ngram-containment-for-contamination.md))
+- **Structural `Protocol` typing for models and graders.** Any object with the right
+  shape is a first-class citizen, so API wrappers, local models, and deterministic stubs
+  are evaluated identically and the framework stays open for extension.
+- **Offline-first.** The whole pipeline runs with no network; provider SDKs are lazily
+  imported so a missing one yields an actionable error rather than a hard dependency.
 
 ## Evaluation
 
-How the numbers were produced: datasets, graders, seeds, hardware, cost.
-See [`docs/EVALUATION_REPORT.md`](docs/EVALUATION_REPORT.md) and the experiment dashboard: `W&B_URL`.
+The bundled tasks are deliberately small and transparent so the published numbers are
+reproducible on any machine in seconds:
+
+- **arithmetic** - deterministic, seed-generated two-operand problems, numerically graded.
+- **sentiment** - binary classification over a bundled dataset that includes negation and
+  mixed-polarity sentences, a known failure mode for lexicon classifiers.
+
+Full methodology, seeds, and per-model numbers are in
+[docs/EVALUATION_REPORT.md](docs/EVALUATION_REPORT.md).
 
 ## Responsible AI
 
-- **Model card:** [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md)
-- **Data card:** [`docs/DATA_CARD.md`](docs/DATA_CARD.md)
-- **Threat model:** [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md)
+- **Model card:** [docs/MODEL_CARD.md](docs/MODEL_CARD.md)
+- **Data card:** [docs/DATA_CARD.md](docs/DATA_CARD.md)
+- **Threat model:** [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
 
 ## Limitations
 
-Honest list of what this does **not** do, known failure modes, and where it breaks.
+- The bundled tasks demonstrate the framework; they are not competitive benchmarks. The
+  value is the measurement machinery, which accepts any task and grader.
+- Model-graded scoring is only as reliable as the judge model; validate it against human
+  labels before trusting it (see the evaluation report).
+- Contamination detection is n-gram based and will miss paraphrased leakage.
 
 ## Roadmap
 
-- [ ] Next improvement
-- [ ] Stretch goal
+- [ ] Concurrent generation for provider-backed models
+- [ ] Per-category score breakdowns and error-analysis export
+- [ ] Additional graders (F1 for extractive answers, pass@k for code)
 
 ## License
 
-[MIT](LICENSE) · Part of a [24-project AI-engineering portfolio](PORTFOLIO_URL).
+[MIT](LICENSE). Part of a 28-project artificial intelligence engineering portfolio by
+[adeoluo](https://github.com/adeoluo).
