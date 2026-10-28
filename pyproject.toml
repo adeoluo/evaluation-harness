@@ -1,23 +1,30 @@
 [project]
 name = "evaluation-harness"
 version = "0.1.0"
-description = "One-line description."
+description = "A principled, from-scratch evaluation and benchmarking framework for large language models and agents."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Adeolu Ogunnoiki" }]
 dependencies = [
+    "numpy>=1.26",
     "pydantic>=2.0",
     "pydantic-settings>=2.0",
     "structlog>=24.0",
 ]
 
 [project.optional-dependencies]
-# install with: uv sync --extra ml
-ml = [
-    "numpy>=1.26",
-    "torch>=2.2",
+# Provider adapters are optional; the framework runs fully offline without them.
+# install with: uv sync --extra openai  (or) --extra anthropic
+openai = [
+    "openai>=1.0",
 ]
+anthropic = [
+    "anthropic>=0.39",
+]
+
+[project.scripts]
+evaluation-harness = "evaluation_harness.cli:main"
 
 [dependency-groups]
 dev = [
