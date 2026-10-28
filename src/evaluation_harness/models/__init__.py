@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from evaluation_harness.core.model import Model
+from evaluation_harness.models.entailment_heuristic import OverlapEntailmentModel
 from evaluation_harness.models.heuristics import (
     ArithmeticSolverModel,
     KeywordSentimentModel,
@@ -21,7 +22,9 @@ _BUILDERS: dict[str, Callable[[], Model]] = {
     "echo": EchoModel,
     "arithmetic-solver": ArithmeticSolverModel,
     "keyword-sentiment": KeywordSentimentModel,
+    "overlap-entailment": OverlapEntailmentModel,
     "constant-positive": lambda: ConstantModel(answer="positive", name="constant-positive"),
+    "constant-entailment": lambda: ConstantModel(answer="entailment", name="constant-entailment"),
     "constant-zero": lambda: ConstantModel(answer="0", name="constant-zero"),
 }
 
@@ -53,6 +56,7 @@ __all__ = [
     "EchoModel",
     "KeywordSentimentModel",
     "OpenAIModel",
+    "OverlapEntailmentModel",
     "available_models",
     "build_model",
 ]
