@@ -1,21 +1,28 @@
 # Threat Model - Evaluation Harness
 
 ## Assets
-- What's worth protecting (data, keys, model, user trust, budget).
+
+- Integrity of the reported numbers (a misleading evaluation is the primary harm).
+- Any API keys supplied by the user for provider adapters.
 
 ## Trust boundaries
-- Where untrusted input crosses into the system (reference the architecture diagram).
 
-## Threats (STRIDE + LLM-specific)
+- **Task data and model outputs** are untrusted text. They flow into graders and reports.
+- **Provider adapters** are the only components that cross the network boundary.
+
+## Threats and mitigations
 
 | Threat | Vector | Impact | Mitigation |
 |---|---|---|---|
-| Prompt injection | Untrusted content in context / tools | Data exfiltration, unsafe actions | Input/output filtering, tool allow-list, least privilege |
-| Jailbreak | Adversarial user prompt | Policy bypass | System-prompt hardening, output classifier, refusal evaluation |
-| Data exfiltration | Model echoes secrets / PII | Privacy breach | Secret scanning, output redaction, no secrets in context |
-| Excessive cost | Unbounded loops / large inputs | $ blowout | Token/step budgets, rate limits, timeouts |
-| Tool abuse | Agent calls dangerous tool | Destructive action | Approval gates, sandboxing, dry-run |
-| Supply chain | Malicious dependency | Code execution | Pinned dependencies, Dependabot, SBOM |
+| Benchmark contamination | Test items present in training data | Inflated, misleading scores | N-gram containment scan; data card documents provenance |
+| Judge manipulation | Prediction text crafted to steer a model-graded verdict | Wrong scores | Defensive verdict parsing; validate judge against human labels; prefer rule-based graders where possible |
+| Unsafe expression evaluation | Arithmetic solver parsing model/task text | Code execution | Expressions are parsed to an AST and evaluated with a fixed operator allow-list; `eval` is never used |
+| Secret leakage | API keys in logs or reports | Credential compromise | Keys read from environment only; never logged; `.env` is git-ignored |
+| Supply-chain compromise | Malicious dependency | Code execution | Minimal dependencies (numpy core); pinned lockfile; Dependabot; CodeQL |
+| Resource exhaustion | Very large task or corpus | Memory / time blowup | Deterministic, bounded bundled tasks; contamination reference set size is the documented cost |
 
 ## Residual risk
-- What remains after mitigations and why it's acceptable.
+
+Paraphrased contamination (no shared n-grams) is undetectable by n-gram methods and
+remains a known, documented limitation. Model-graded reliability ultimately depends on
+the judge, which the user must validate for their setting.

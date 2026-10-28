@@ -15,24 +15,37 @@ flowchart LR
     classDef core     fill:#6366F1,stroke:#1E293B,color:#ffffff,stroke-width:1px;
     classDef data     fill:#10B981,stroke:#1E293B,color:#ffffff,stroke-width:1px;
     classDef external fill:#F59E0B,stroke:#1E293B,color:#1E293B,stroke-width:1px;
-    classDef danger   fill:#EF4444,stroke:#1E293B,color:#ffffff,stroke-width:1px;
 
-    User([User]):::external
+    User([User / CLI]):::external
 
-    subgraph Application["Application Service"]
-        API[API Layer]:::core
-        Core[Core Engine]:::core
-        Evaluation[Evaluation Harness]:::core
+    subgraph Registries["Registries"]
+        Tasks[(Task registry)]:::data
+        Models[(Model registry)]:::data
     end
 
-    Cache[(Semantic Cache)]:::data
-    Store[(Datastore / Index)]:::data
-    LLM{{LLM Provider}}:::external
+    subgraph Engine["Evaluation Engine"]
+        Runner[Runner]:::core
+        Grader[Grader]:::core
+        Stats[Bootstrap statistics]:::core
+    end
 
-    User -->|request| API
-    API --> Core
-    Core -->|lookup| Cache
-    Core -->|retrieve| Store
-    Core -->|completion| LLM
-    Core -.->|traces/metrics| Evaluation
-    Core -->|response| User
+    Contam[Contamination scan]:::core
+
+    subgraph Output["Reporting"]
+        Table[Text table]:::core
+        Json[JSON report]:::core
+    end
+
+    Provider{{LLM provider}}:::external
+
+    User -->|run| Runner
+    Models -->|build| Runner
+    Tasks -->|load| Runner
+    Runner -->|generate| Provider
+    Runner -->|score| Grader
+    Runner -->|scores| Stats
+    Stats --> Table
+    Stats --> Json
+    Tasks -.->|examples| Contam
+    Table -->|results| User
+    Json -->|results| User
