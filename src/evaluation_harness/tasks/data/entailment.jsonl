@@ -1,0 +1,30 @@
+{"premise": "A man is playing a guitar on stage.", "hypothesis": "A person is making music.", "label": "entailment"}
+{"premise": "The dog is sleeping on the couch.", "hypothesis": "The dog is running in the park.", "label": "contradiction"}
+{"premise": "A woman is reading a book in a cafe.", "hypothesis": "The woman is drinking coffee.", "label": "neutral"}
+{"premise": "Two children are building a sandcastle.", "hypothesis": "Children are at the beach.", "label": "entailment"}
+{"premise": "The store is closed on Sundays.", "hypothesis": "The store is open every day.", "label": "contradiction"}
+{"premise": "A chef is chopping vegetables.", "hypothesis": "The chef is preparing a salad.", "label": "neutral"}
+{"premise": "It is raining heavily outside.", "hypothesis": "The weather is wet.", "label": "entailment"}
+{"premise": "The team won the championship.", "hypothesis": "The team lost every game.", "label": "contradiction"}
+{"premise": "A student is writing an exam.", "hypothesis": "The student is nervous.", "label": "neutral"}
+{"premise": "The cat climbed the tall tree.", "hypothesis": "An animal went up a tree.", "label": "entailment"}
+{"premise": "He parked the car in the garage.", "hypothesis": "The car is on the highway.", "label": "contradiction"}
+{"premise": "She bought fresh flowers at the market.", "hypothesis": "The flowers are roses.", "label": "neutral"}
+{"premise": "The orchestra performed a symphony.", "hypothesis": "Musicians played music.", "label": "entailment"}
+{"premise": "All the lights in the house are off.", "hypothesis": "The house is brightly lit.", "label": "contradiction"}
+{"premise": "A man is riding a bicycle downtown.", "hypothesis": "The man is commuting to work.", "label": "neutral"}
+{"premise": "The bakery sells fresh bread every morning.", "hypothesis": "The bakery makes bread.", "label": "entailment"}
+{"premise": "The pool is completely empty of water.", "hypothesis": "The pool is full for swimming.", "label": "contradiction"}
+{"premise": "A group of friends is hiking a trail.", "hypothesis": "The friends are tired.", "label": "neutral"}
+{"premise": "The scientist conducted an experiment.", "hypothesis": "Research was performed.", "label": "entailment"}
+{"premise": "The library is silent and full of books.", "hypothesis": "The library is a loud nightclub.", "label": "contradiction"}
+{"premise": "A toddler is stacking colorful blocks.", "hypothesis": "The toddler is two years old.", "label": "neutral"}
+{"premise": "The firefighters extinguished the blaze.", "hypothesis": "A fire was put out.", "label": "entailment"}
+{"premise": "The plane landed safely at the airport.", "hypothesis": "The plane crashed into the ocean.", "label": "contradiction"}
+{"premise": "A painter is working on a large canvas.", "hypothesis": "The painting is a landscape.", "label": "neutral"}
+{"premise": "The farmer harvested the wheat field.", "hypothesis": "Crops were gathered.", "label": "entailment"}
+{"premise": "The phone battery is fully charged.", "hypothesis": "The phone is completely dead.", "label": "contradiction"}
+{"premise": "A couple is dancing at the wedding.", "hypothesis": "The couple is married.", "label": "neutral"}
+{"premise": "The volcano erupted with great force.", "hypothesis": "A natural disaster occurred.", "label": "entailment"}
+{"premise": "The road is blocked by heavy snow.", "hypothesis": "The road is clear and dry.", "label": "contradiction"}
+{"premise": "A journalist is interviewing a politician.", "hypothesis": "The interview is about taxes.", "label": "neutral"}

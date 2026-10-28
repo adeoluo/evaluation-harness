@@ -6,11 +6,15 @@ from collections.abc import Callable
 
 from evaluation_harness.core.task import Task
 from evaluation_harness.tasks.arithmetic import build_arithmetic_task
+from evaluation_harness.tasks.entailment import build_entailment_task
+from evaluation_harness.tasks.factual_qa import build_factual_qa_task
 from evaluation_harness.tasks.sentiment import build_sentiment_task
 
 _BUILDERS: dict[str, Callable[[], Task]] = {
     "arithmetic": build_arithmetic_task,
     "sentiment": build_sentiment_task,
+    "entailment": build_entailment_task,
+    "factual_qa": build_factual_qa_task,
 }
 
 
@@ -37,6 +41,8 @@ def load_task(name: str) -> Task:
 __all__ = [
     "available_tasks",
     "build_arithmetic_task",
+    "build_entailment_task",
+    "build_factual_qa_task",
     "build_sentiment_task",
     "load_task",
 ]
