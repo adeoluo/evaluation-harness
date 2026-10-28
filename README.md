@@ -83,6 +83,19 @@ The numbers demonstrate the framework's central promise: it cleanly separates a 
 solver from a weak baseline, and the lexicon sentiment model's visible interval reflects
 its genuine errors on the negation examples in the benchmark.
 
+## Performance
+
+> Measured with `uv run python benchmarks/benchmark.py`.
+
+| Operation | Throughput |
+|---|---:|
+| Model evaluation (grade + collect) | ~120,000 examples / sec |
+| Bootstrap confidence interval (10k resamples) | ~257 intervals / sec |
+| Paired significance test (10k resamples) | ~288 tests / sec |
+
+Evaluation is pure-Python and offline; a full benchmark with statistical rigor runs in
+milliseconds.
+
 ## Quickstart
 
 ```bash
