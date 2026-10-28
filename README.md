@@ -40,6 +40,28 @@ corpus. Models and tasks are produced by small **registries**, so the command-li
 interface stays declarative. See the [architecture decision records](docs/adr/) for the
 reasoning behind key choices.
 
+## Capabilities
+
+A comprehensive measurement toolkit, all offline and from first principles:
+
+- **16 graders** across every task family: exact match, includes, regex, fuzzy
+  (edit distance), numeric tolerance, multiple choice, token F1, ROUGE-L, set and
+  ordered-list matching, JSON validity and field extraction, rubric model-grading, and
+  composite graders (any / all / weighted) that combine the rest.
+- **Statistical rigor**: bootstrap confidence intervals on every metric, plus paired
+  significance testing (paired bootstrap and the exact McNemar test) and Cohen's d effect
+  size for comparing two models on the same examples.
+- **Production runner**: optional thread-pool **concurrency**, **retries** with
+  exponential backoff, and a **caching** model wrapper that memoizes predictions (with
+  optional disk persistence).
+- **Cumulative evaluation**: lossless **run records** (save/load to JSON), automatic
+  **regression detection** between a baseline and a candidate run (per-task deltas and
+  per-example flips), and **contamination** scanning via n-gram containment.
+- **Reporting**: aligned text tables, Markdown, self-contained HTML, JSON with per-example
+  records, and an error-analysis view that surfaces the worst examples.
+- **4 bundled tasks** (arithmetic, sentiment, 3-way entailment, factual QA) with
+  transparent baselines and heuristics, plus optional OpenAI and Anthropic adapters.
+
 ## Results
 
 > Reproduce with `make evaluation`. Scores are mean +/- 95% bootstrap confidence interval.
@@ -50,6 +72,12 @@ reasoning behind key choices.
 | arithmetic | `constant-zero` (baseline) | 0.0% +/- 0.0% | 60 |
 | sentiment | `keyword-sentiment` | **91.7% +/- 7.3%** | 48 |
 | sentiment | majority-class (baseline) | 50.0% +/- 14.6% | 48 |
+| entailment | `overlap-entailment` | **50.0% +/- 16.7%** | 30 |
+| factual_qa | oracle (F1 upper bound) | **100.0% +/- 0.0%** | 25 |
+
+The `compare` command additionally reports significance. For example,
+`keyword-sentiment` versus the majority baseline on sentiment: **p < 0.0001**, Cohen's
+d = **0.84** - a large, significant difference, not noise.
 
 The numbers demonstrate the framework's central promise: it cleanly separates a real
 solver from a weak baseline, and the lexicon sentiment model's visible interval reflects
@@ -69,6 +97,10 @@ uv run python -m evaluation_harness list
 uv run python -m evaluation_harness run --model keyword-sentiment --task sentiment
 uv run python -m evaluation_harness run \
     --model arithmetic-solver --task arithmetic --json report.json
+
+# compare two models with a significance test
+uv run python -m evaluation_harness compare \
+    --model-a keyword-sentiment --model-b constant-positive --task sentiment
 ```
 
 Evaluate a frontier model by installing its optional extra and setting an API key:
