@@ -68,3 +68,44 @@ def test_run_unknown_task_exits_nonzero(capsys: pytest.CaptureFixture[str]) -> N
 def test_missing_command_errors() -> None:
     with pytest.raises(SystemExit):
         main([])
+
+
+def test_compare_command_runs(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = main(
+        [
+            "compare",
+            "--model-a",
+            "keyword-sentiment",
+            "--model-b",
+            "constant-positive",
+            "--task",
+            "sentiment",
+        ]
+    )
+    output = capsys.readouterr().out
+    assert exit_code == 0
+    assert "p-value" in output
+    assert "Effect size" in output
+
+
+def test_compare_mcnemar(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = main(
+        [
+            "compare",
+            "--model-a",
+            "keyword-sentiment",
+            "--model-b",
+            "constant-positive",
+            "--task",
+            "sentiment",
+            "--test",
+            "mcnemar",
+        ]
+    )
+    assert exit_code == 0
+    assert "mcnemar" in capsys.readouterr().out
+
+
+def test_compare_unknown_model_exits(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = main(["compare", "--model-a", "nope", "--model-b", "echo", "--task", "sentiment"])
+    assert exit_code == 2

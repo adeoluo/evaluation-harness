@@ -1,10 +1,11 @@
 """Command-line interface for running evaluations.
 
-Two subcommands:
+Subcommands:
 
 - ``list`` - show the built-in tasks and models.
 - ``run`` - evaluate a model on one or more tasks and print a results table, with an
   optional machine-readable JSON export.
+- ``compare`` - evaluate two models on a task and report a significance test.
 
 The CLI wires together the registries, the runner, and the reporters; it contains no
 evaluation logic of its own.
@@ -22,6 +23,7 @@ from evaluation_harness.core.result import TaskResult
 from evaluation_harness.core.runner import Runner
 from evaluation_harness.models import available_models, build_model
 from evaluation_harness.reporting import format_results_table, results_to_json
+from evaluation_harness.significance import mcnemar_test, paired_bootstrap_test
 from evaluation_harness.tasks import available_tasks, load_task
 
 
@@ -59,6 +61,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Write a full JSON report to PATH.",
     )
     run_parser.set_defaults(handler=_handle_run)
+
+    compare_parser = subparsers.add_parser(
+        "compare", help="Compare two models on a task with a significance test."
+    )
+    compare_parser.add_argument("--model-a", required=True, help="First model name.")
+    compare_parser.add_argument("--model-b", required=True, help="Second model name.")
+    compare_parser.add_argument("--task", required=True, help="Task name.")
+    compare_parser.add_argument(
+        "--test",
+        choices=("bootstrap", "mcnemar"),
+        default="bootstrap",
+        help="Significance test to apply.",
+    )
+    compare_parser.add_argument("--seed", type=int, default=0, help="Aggregation seed.")
+    compare_parser.set_defaults(handler=_handle_compare)
     return parser
 
 
@@ -94,6 +111,33 @@ def _handle_run(args: argparse.Namespace) -> int:
     if args.json is not None:
         args.json.write_text(results_to_json(results, confidence=args.confidence), encoding="utf-8")
         print(f"\nWrote JSON report to {args.json}")
+    return 0
+
+
+def _handle_compare(args: argparse.Namespace) -> int:
+    try:
+        model_a = build_model(args.model_a)
+        model_b = build_model(args.model_b)
+        task = load_task(args.task)
+    except KeyError as error:
+        print(str(error), file=sys.stderr)
+        return 2
+
+    runner = Runner(seed=args.seed)
+    result_a = runner.run(model_a, task)
+    result_b = runner.run(model_b, task)
+    test = mcnemar_test if args.test == "mcnemar" else paired_bootstrap_test
+    comparison = test(result_a.scores, result_b.scores)
+
+    print(f"Task: {task.name} (N={result_a.count})")
+    print(f"  {model_a.name}: {result_a.accuracy().format()}")
+    print(f"  {model_b.name}: {result_b.accuracy().format()}")
+    print(f"  Mean difference (A - B): {comparison.mean_difference:+.4f}")
+    print(f"  Test: {comparison.test}")
+    print(f"  p-value: {comparison.p_value:.4f}")
+    print(f"  Effect size (Cohen's d): {comparison.effect_size:+.3f}")
+    verdict = "significant" if comparison.significant else "not significant"
+    print(f"  Verdict: difference is {verdict} at alpha=0.05")
     return 0
 
 
