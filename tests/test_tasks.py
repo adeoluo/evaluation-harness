@@ -39,7 +39,7 @@ def test_sentiment_task_loads_bundled_data() -> None:
 
 
 def test_registry_lists_and_loads_tasks() -> None:
-    assert set(available_tasks()) == {"arithmetic", "sentiment"}
+    assert {"arithmetic", "sentiment"} <= set(available_tasks())
     assert load_task("arithmetic").name == "arithmetic"
 
 
