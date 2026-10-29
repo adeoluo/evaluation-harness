@@ -1,4 +1,4 @@
-"""Evaluation Harness - a principled framework for evaluating language models.
+"""Evaluation Harness - a framework for evaluating language models.
 
 Public API: the five core abstractions and the statistical aggregation used to turn
 raw scores into honest, error-barred metrics.
