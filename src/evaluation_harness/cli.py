@@ -76,7 +76,19 @@ def build_parser() -> argparse.ArgumentParser:
     )
     compare_parser.add_argument("--seed", type=int, default=0, help="Aggregation seed.")
     compare_parser.set_defaults(handler=_handle_compare)
+
+    serve_parser = subparsers.add_parser("serve", help="Start the HTTP evaluation service.")
+    serve_parser.add_argument("--host", default="127.0.0.1", help="Bind host.")
+    serve_parser.add_argument("--port", type=int, default=8000, help="Bind port.")
+    serve_parser.set_defaults(handler=_handle_serve)
     return parser
+
+
+def _handle_serve(args: argparse.Namespace) -> int:
+    from evaluation_harness.service import serve
+
+    serve(host=args.host, port=args.port)
+    return 0
 
 
 def _handle_list(_: argparse.Namespace) -> int:
