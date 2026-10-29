@@ -31,7 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Construct the argument parser."""
     parser = argparse.ArgumentParser(
         prog="evaluation-harness",
-        description="A principled evaluation harness for language models and agents.",
+        description="An evaluation harness for language models and agents.",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
