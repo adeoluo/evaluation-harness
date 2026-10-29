@@ -16,13 +16,15 @@ Endpoints
 from __future__ import annotations
 
 import json
+import time
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 
 from evaluation_harness.core import Runner, TaskResult
 from evaluation_harness.models import available_models, build_model
+from evaluation_harness.observability import ServiceMetrics
 from evaluation_harness.significance import mcnemar_test, paired_bootstrap_test
 from evaluation_harness.tasks import available_tasks, load_task
 
@@ -36,6 +38,7 @@ class EvaluationService:
 
     tasks: tuple[str, ...]
     models: tuple[str, ...]
+    metrics: ServiceMetrics = field(default_factory=ServiceMetrics)
 
     @classmethod
     def build(cls) -> EvaluationService:
@@ -121,11 +124,9 @@ def _validate_compare(
     return str(body["model_a"]), str(body["model_b"]), str(task), test, seed
 
 
-def handle(
+def _route(
     method: str, path: str, body: Mapping[str, Any], service: EvaluationService
 ) -> tuple[int, JsonObject]:
-    """Pure request handler: route a request to a status code and payload."""
-
     if method == "GET" and path == "/health":
         return 200, {"status": "ok", "tasks": list(service.tasks), "models": list(service.models)}
     if method == "POST" and path == "/evaluate":
@@ -143,6 +144,21 @@ def handle(
     return 404, {"error": f"no route for {method} {path}"}
 
 
+def handle(
+    method: str, path: str, body: Mapping[str, Any], service: EvaluationService
+) -> tuple[int, JsonObject]:
+    """Route a request, recording per-route metrics, and return status and payload."""
+
+    if method == "GET" and path == "/ready":
+        return 200, {"status": "ready"}
+    start = time.perf_counter()
+    status, payload = _route(method, path, body, service)
+    service.metrics.observe(
+        f"{method} {path}", (time.perf_counter() - start) * 1000.0, error=status >= 400
+    )
+    return status, payload
+
+
 class _Handler(BaseHTTPRequestHandler):  # pragma: no cover - exercised over sockets
     service: EvaluationService
 
@@ -155,6 +171,14 @@ class _Handler(BaseHTTPRequestHandler):  # pragma: no cover - exercised over soc
         self.wfile.write(encoded)
 
     def do_GET(self) -> None:
+        if self.path == "/metrics":
+            body = self.service.metrics.render_prometheus().encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; version=0.0.4")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         status, payload = handle("GET", self.path, {}, self.service)
         self._respond(status, payload)
 
