@@ -1,7 +1,7 @@
 <h1 align="center">Evaluation Harness</h1>
 
 <p align="center">
-  <em>A principled, from-scratch evaluation and benchmarking framework for large language models and agents.</em>
+  <em>A from-scratch evaluation and benchmarking framework for large language models and agents.</em>
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@ set leaked into training. This framework treats evaluation as a measurement disc
 every metric ships with a **bootstrap confidence interval**, every task runs against a
 **baseline**, and every benchmark can be scanned for **contamination**.
 
-It is built from first principles (no evaluation-framework dependency) around five small,
+It is built from scratch (no evaluation-framework dependency) around five small,
 composable abstractions, and it runs **fully offline** so results are reproducible and
 continuous integration is hermetic. Frontier-provider adapters are optional add-ons.
 
@@ -42,7 +42,7 @@ reasoning behind key choices.
 
 ## Capabilities
 
-A comprehensive measurement toolkit, all offline and from first principles:
+A comprehensive measurement toolkit, all offline and from scratch:
 
 - **16 graders** across every task family: exact match, includes, regex, fuzzy
   (edit distance), numeric tolerance, multiple choice, token F1, ROUGE-L, set and
