@@ -16,6 +16,8 @@ two models with a significance test, returning error-barred metrics.
 | Method | Path | Body | Success |
 |---|---|---|---|
 | GET | `/health` | none | status, task names, model names |
+| GET | `/ready` | none | readiness of the harness |
+| GET | `/metrics` | none | per-route request, error, and latency metrics (Prometheus text) |
 | POST | `/evaluate` | `{"model", "tasks", "confidence"?, "seed"?}` | per-task accuracy with a confidence interval |
 | POST | `/compare` | `{"model_a", "model_b", "task", "test"?, "seed"?}` | both accuracies, p-value, effect size, verdict |
 

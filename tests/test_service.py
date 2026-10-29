@@ -73,3 +73,19 @@ def test_unknown_route() -> None:
     status, payload = handle("GET", "/nope", {}, _SERVICE)
     assert status == 404
     assert "error" in payload
+
+
+def test_ready_endpoint() -> None:
+    status, payload = handle("GET", "/ready", {}, EvaluationService.build())
+    assert status == 200
+    assert payload["status"] == "ready"
+
+
+def test_metrics_record_requests() -> None:
+    service = EvaluationService.build()
+    handle("POST", "/evaluate", {"model": "arithmetic-solver", "tasks": ["arithmetic"]}, service)
+    text = service.metrics.render_prometheus()
+    assert "service_requests_total" in text
+    assert 'route="POST /evaluate"' in text
+    assert "service_request_duration_ms_bucket" in text
+    assert service.metrics.total_requests >= 1

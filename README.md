@@ -169,6 +169,7 @@ production-style stress benchmark (`uv run python benchmarks/stress.py`) reports
 and p50/p95/p99 latency; notably, throughput here *scales with threads* because the numeric
 bootstrap releases the global interpreter lock, unlike the pure-Python services elsewhere in
 this portfolio. See the [operations guide](docs/OPERATIONS.md), the
+The service also exposes `GET /ready` (readiness) and `GET /metrics` (per-route request, error, and latency metrics in Prometheus text format).
 [scaling and tradeoffs](docs/SCALING.md) document, and the
 [case study](docs/CASE_STUDY.md) on defending the claim that one model is better than another.
 
@@ -194,5 +195,5 @@ this portfolio. See the [operations guide](docs/OPERATIONS.md), the
 
 ## License
 
-[MIT](LICENSE). Part of a 28-project artificial intelligence engineering portfolio by
+[MIT](LICENSE). Part of an artificial intelligence engineering portfolio by
 [adeoluo](https://github.com/adeoluo).
