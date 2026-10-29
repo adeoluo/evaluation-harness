@@ -8,44 +8,47 @@ config:
     primaryBorderColor: "#1E293B"
     primaryTextColor: "#1E293B"
     lineColor: "#64748B"
-    clusterBkg: "#E2E8F0"
+    clusterBkg: "#EEF2FF"
     clusterBorder: "#94A3B8"
 ---
-flowchart LR
+flowchart TB
+    classDef edge     fill:#F59E0B,stroke:#1E293B,color:#1E293B,stroke-width:1px;
     classDef core     fill:#6366F1,stroke:#1E293B,color:#ffffff,stroke-width:1px;
     classDef data     fill:#10B981,stroke:#1E293B,color:#ffffff,stroke-width:1px;
-    classDef external fill:#F59E0B,stroke:#1E293B,color:#1E293B,stroke-width:1px;
+    classDef control  fill:#0EA5E9,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef obs      fill:#CBD5E1,stroke:#1E293B,color:#1E293B,stroke-width:1px;
 
-    User([User / CLI]):::external
+    Client([Client]):::edge
 
-    subgraph Registries["Registries"]
-        Tasks[(Task registry)]:::data
-        Models[(Model registry)]:::data
+    subgraph Edge["Service layer (stdlib HTTP, stateless)"]
+        direction TB
+        Router["Router<br/>/health | /evaluate | /compare"]:::core
+        Validate["Validation<br/>known model/task, bounds"]:::control
     end
 
-    subgraph Engine["Evaluation Engine"]
-        Runner[Runner]:::core
-        Grader[Grader]:::core
-        Stats[Bootstrap statistics]:::core
+    subgraph Run["Evaluation"]
+        direction TB
+        Runner["Runner<br/>model x task, seeded"]:::core
+        Grader["Grader<br/>score each example"]:::core
     end
 
-    Contam[Contamination scan]:::core
-
-    subgraph Output["Reporting"]
-        Table[Text table]:::core
-        Json[JSON report]:::core
+    subgraph Stats["Statistics"]
+        direction TB
+        Bootstrap["Bootstrap aggregate<br/>mean + confidence interval"]:::core
+        Significance["Significance test<br/>paired bootstrap / McNemar"]:::core
     end
 
-    Provider{{LLM provider}}:::external
+    Tasks[(Built-in tasks)]:::data
+    Models[(Built-in models)]:::data
+    Report["Error-barred metrics<br/>+ significance verdict"]:::obs
 
-    User -->|run| Runner
-    Models -->|build| Runner
-    Tasks -->|load| Runner
-    Runner -->|generate| Provider
-    Runner -->|score| Grader
-    Runner -->|scores| Stats
-    Stats --> Table
-    Stats --> Json
-    Tasks -.->|examples| Contam
-    Table -->|results| User
-    Json -->|results| User
+    Client -->|JSON request| Router --> Validate
+    Tasks -.-> Runner
+    Models -.-> Runner
+    Validate -->|model + tasks| Runner
+    Runner --> Grader
+    Grader -->|scores| Bootstrap
+    Grader -->|paired scores| Significance
+    Bootstrap --> Report
+    Significance --> Report
+    Report --> Router -->|JSON response| Client

@@ -150,6 +150,28 @@ reproducible on any machine in seconds:
 Full methodology, seeds, and per-model numbers are in
 [docs/EVALUATION_REPORT.md](docs/EVALUATION_REPORT.md).
 
+## Running the service
+
+A dependency-free HTTP service evaluates models on tasks and compares two models with a
+significance test:
+
+```bash
+python -m evaluation_harness serve --port 8000
+
+curl localhost:8000/health
+curl -s -X POST localhost:8000/evaluate -d '{"model": "arithmetic-solver", "tasks": ["arithmetic"]}'
+curl -s -X POST localhost:8000/compare -d '{"model_a": "arithmetic-solver", "model_b": "constant-zero", "task": "arithmetic"}'
+```
+
+`POST /evaluate` returns per-task accuracy with a bootstrap confidence interval; `POST
+/compare` returns both accuracies, a p-value, an effect size, and a significance verdict. A
+production-style stress benchmark (`uv run python benchmarks/stress.py`) reports throughput
+and p50/p95/p99 latency; notably, throughput here *scales with threads* because the numeric
+bootstrap releases the global interpreter lock, unlike the pure-Python services elsewhere in
+this portfolio. See the [operations guide](docs/OPERATIONS.md), the
+[scaling and tradeoffs](docs/SCALING.md) document, and the
+[case study](docs/CASE_STUDY.md) on defending the claim that one model is better than another.
+
 ## Responsible AI
 
 - **Model card:** [docs/MODEL_CARD.md](docs/MODEL_CARD.md)
