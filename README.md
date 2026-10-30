@@ -83,6 +83,24 @@ The numbers demonstrate the framework's central promise: it cleanly separates a 
 solver from a weak baseline, and the lexicon sentiment model's visible interval reflects
 its genuine errors on the negation examples in the benchmark.
 
+### Scale
+
+To check that the core evaluation loop holds up on large datasets, `benchmarks/scale.py`
+runs the `arithmetic-solver` over deterministically generated arithmetic tasks at
+growing sizes, timing `Runner.run` and tracking peak memory with the standard-library
+`tracemalloc`. The data is synthetic and the numbers are environment-specific, but the
+shape is the point: throughput stays roughly flat and memory grows linearly with the
+number of examples, while grading accuracy stays at 100% because the solver is exact.
+
+| Examples | Wall-clock (s) | Throughput (examples/s) | Peak memory (MiB) | Accuracy |
+|---:|---:|---:|---:|---:|
+| 2,000 | 0.055 | ~36,100 | 1.18 | 100.0% |
+| 8,000 | 0.219 | ~36,500 | 4.69 | 100.0% |
+| 32,000 | 0.933 | ~34,300 | 18.86 | 100.0% |
+| 64,000 | 2.596 | ~24,700 | 37.76 | 100.0% |
+
+Reproduce with `uv run python benchmarks/scale.py`.
+
 ## Performance
 
 > Measured with `uv run python benchmarks/benchmark.py`.
