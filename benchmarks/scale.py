@@ -23,7 +23,7 @@ from evaluation_harness.core import Runner
 from evaluation_harness.models import build_model
 from evaluation_harness.tasks.arithmetic import build_arithmetic_task
 
-WORKLOAD_SIZES: tuple[int, ...] = (2_000, 8_000, 32_000, 64_000)
+WORKLOAD_SIZES: tuple[int, ...] = (2_000, 8_000, 32_000, 64_000, 128_000)
 
 
 @dataclass(frozen=True, slots=True)
