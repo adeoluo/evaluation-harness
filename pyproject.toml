@@ -30,6 +30,14 @@ dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",
 ]
+# Optional, opt-in only: the independent statistics cross-check in
+# tests/test_scipy_parity.py that validates the from-scratch bootstrap CI,
+# paired bootstrap, McNemar test, and Cohen's d against scipy.stats. Not
+# installed by default CI, so the significance code stays reference-free.
+# Run with: uv sync --group validation && uv run pytest tests/test_scipy_parity.py
+validation = [
+    "scipy>=1.11",
+]
 
 [build-system]
 requires = ["hatchling"]

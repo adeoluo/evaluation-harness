@@ -94,12 +94,39 @@ number of examples, while grading accuracy stays at 100% because the solver is e
 
 | Examples | Wall-clock (s) | Throughput (examples/s) | Peak memory (MiB) | Accuracy |
 |---:|---:|---:|---:|---:|
-| 2,000 | 0.055 | ~36,100 | 1.18 | 100.0% |
-| 8,000 | 0.219 | ~36,500 | 4.69 | 100.0% |
-| 32,000 | 0.933 | ~34,300 | 18.86 | 100.0% |
-| 64,000 | 2.596 | ~24,700 | 37.76 | 100.0% |
+| 2,000 | 0.046 | ~43,900 | 1.18 | 100.0% |
+| 8,000 | 0.178 | ~45,100 | 4.69 | 100.0% |
+| 32,000 | 0.707 | ~45,200 | 18.86 | 100.0% |
+| 64,000 | 1.884 | ~34,000 | 37.76 | 100.0% |
+| 128,000 | 3.509 | ~36,500 | 75.60 | 100.0% |
 
-Reproduce with `uv run python benchmarks/scale.py`.
+Reproduce with `uv run python benchmarks/scale.py`. The sweep now extends to **128,000 examples**,
+where the loop still grades at 100% accuracy and peak memory grows linearly with the dataset
+(~0.6 KiB/example).
+
+### Independent validation against scipy
+
+The statistics are written from scratch, so correctness is only credible if it agrees with an
+established reference. `tests/test_scipy_parity.py` cross-checks every quantity against
+[`scipy.stats`](https://docs.scipy.org/doc/scipy/reference/stats.html) on shared synthetic data:
+
+| From-scratch quantity | scipy reference | Measured agreement |
+|---|---|---|
+| **Cohen's d** (paired) | `ttest_rel().statistic / sqrt(n)` | max abs diff **2.2e-16** |
+| **McNemar exact p-value** | `binomtest(min, n, 0.5)` two-sided | max abs diff **1.1e-16** |
+| **Bootstrap 95% CI** | `stats.bootstrap(method="percentile")` | max bound diff **0.0014** |
+| **Paired bootstrap p-value** | `ttest_rel().pvalue` | same decision on every case; max abs diff **0.004** |
+
+Cohen's d and the McNemar test match the reference to **machine precision**; the two Monte-Carlo
+quantities (the bootstrap interval and the paired bootstrap p-value) agree within sampling noise and
+reach the same significance decision as scipy on every case. This validates the hand-written
+statistics against a standard library rather than against themselves. `scipy` is an opt-in
+`validation` dependency (not a runtime dependency), so the significance code stays reference-free and
+default CI skips the test via `pytest.importorskip`:
+
+```bash
+uv sync --group validation && uv run pytest tests/test_scipy_parity.py
+```
 
 ## Performance
 
