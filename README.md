@@ -185,6 +185,12 @@ export OPENAI_API_KEY=...
 
 ## Usage
 
+A real run: the registered tasks and models, then an evaluation with a 95% confidence interval. Regenerate with `vhs docs/demo/run.tape`.
+
+<p align="center">
+  <img src="docs/demo/run.gif" alt="evaluation-harness listing tasks and running an evaluation" width="860">
+</p>
+
 ### HTTP service
 
 A standard-library HTTP service evaluates models on tasks and compares two models with a
