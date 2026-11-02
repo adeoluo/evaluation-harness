@@ -31,12 +31,16 @@ continuous integration is hermetic. Frontier-provider adapters are optional add-
   <img src="docs/architecture/architecture.svg" alt="Architecture diagram" width="860">
 </p>
 
+<sub>Legend: amber = entry points and external systems, indigo = core logic, green = data and state, blue = validation and control, grey = observability and outputs.</sub>
+
 A **Runner** executes a **Model** over a **Task** (examples plus a **Grader**), timing
 and scoring each example. Per-example scores are aggregated by the **bootstrap
 statistics** layer into a mean with a confidence interval, then rendered as a text table
 or JSON. A **contamination** scan independently checks task examples against a reference
 corpus. Models and tasks are produced by small **registries**, so the command-line
-interface stays declarative. See the [architecture decision records](docs/adr/) for the
+interface and the HTTP service (which validates each request and records per-route
+metrics) stay declarative. Saved **run records** feed regression detection between a
+baseline and a candidate run. See the [architecture decision records](docs/adr/) for the
 reasoning behind key choices.
 
 ### Capabilities
