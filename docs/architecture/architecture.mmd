@@ -5,57 +5,44 @@ flowchart LR
     classDef control  fill:#0EA5E9,stroke:#1E293B,color:#ffffff,stroke-width:1px;
     classDef obs      fill:#CBD5E1,stroke:#1E293B,color:#1E293B,stroke-width:1px;
 
-    User([CLI user]):::edge
-    Client([HTTP client]):::edge
-    Providers([OpenAI and Anthropic<br/>optional adapters]):::edge
-
-    subgraph Interfaces["Interfaces (CLI and stdlib HTTP)"]
+    subgraph Interfaces["Interfaces"]
         direction TB
-        CLI["cli.py<br/>list | run | compare | serve"]:::edge
-        Router["service.py router<br/>/health /ready /evaluate /compare /metrics"]:::core
-        Validate["Request validation<br/>known names, confidence, seed"]:::control
-    end
-
-    subgraph Core["Core logic (runner and graders)"]
-        direction TB
-        Registries["Registries<br/>build_model, load_task"]:::core
-        Runner["Runner<br/>thread pool, retries with backoff"]:::core
-        Cache["CachingModel<br/>memoized predictions"]:::core
-        Graders["16 graders<br/>exact, F1, ROUGE-L, rubric, composite"]:::core
+        Users([Users and clients]):::edge
+        CLI["CLI<br/>run, compare, serve"]:::edge
+        Router["HTTP service<br/>/evaluate /compare"]:::core
+        Validate["Validation<br/>names, confidence, seed"]:::control
+        Users --> CLI ~~~ Router --> Validate
     end
 
     subgraph State["Data and state"]
         direction TB
-        Tasks[("4 bundled tasks<br/>arithmetic, sentiment, entailment, QA")]:::data
-        Models[("Offline models<br/>baselines and heuristics")]:::data
-        Records[("RunRecord JSON<br/>lossless save and load")]:::data
+        Catalog[("Tasks and models<br/>4 tasks, 7 models")]:::data
+        Registries["Registries<br/>build_model, load_task"]:::core
+        Records[("Run records<br/>JSON save and load")]:::data
+        Catalog --> Registries ~~~ Records
     end
 
-    subgraph Obs["Statistics, reporting, and observability"]
+    subgraph Core["Runner and graders"]
         direction TB
-        Bootstrap["Bootstrap aggregate<br/>mean and confidence interval"]:::obs
-        Significance["Significance<br/>paired bootstrap, McNemar"]:::obs
-        Checks["Regression and contamination<br/>deltas, flips, n-gram overlap"]:::obs
-        Reports["Reports<br/>table, Markdown, HTML, JSON"]:::obs
-        Metrics["ServiceMetrics<br/>Prometheus text"]:::obs
+        Runner["Runner<br/>threads, retries"]:::core
+        Cache["CachingModel<br/>memoized predictions"]:::core
+        Providers([OpenAI, Anthropic<br/>optional adapters]):::edge
+        Graders["16 graders<br/>exact, F1, ROUGE-L"]:::core
+        Runner -->|predict| Cache -->|cache miss| Providers
+        Providers ~~~ Graders
     end
 
-    User -->|arguments| CLI
-    Client -->|JSON request| Router
-    Router -->|POST /evaluate, /compare| Validate
-    CLI -->|model and task names| Registries
-    Validate -->|model and task names| Registries
-    Tasks -.-> Registries
-    Models -.-> Registries
-    Registries -->|model and task| Runner
-    Runner -->|predict| Cache
-    Cache -->|cache miss| Providers
-    Runner -->|predictions| Graders
-    Graders -->|per-example scores| Bootstrap
-    Graders -->|paired scores| Significance
-    Bootstrap --> Reports
-    Significance --> Reports
-    Runner -->|TaskResult| Records
-    Records -.->|baseline vs candidate| Checks
-    Tasks -.->|n-gram scan| Checks
-    Router -.->|route latency and errors| Metrics
+    subgraph Obs["Statistics and reporting"]
+        direction TB
+        Bootstrap["Bootstrap CI<br/>mean and interval"]:::obs
+        Significance["Significance tests<br/>bootstrap, McNemar"]:::obs
+        Reports["Reports<br/>table, MD, HTML, JSON"]:::obs
+        Checks["Regression and<br/>contamination checks"]:::obs
+        Metrics["Metrics<br/>Prometheus text"]:::obs
+        Bootstrap --> Reports ~~~ Significance ~~~ Checks ~~~ Metrics
+    end
+
+    Interfaces -->|names| State
+    State -->|model, task| Core
+    Core -->|scores| Obs
+    State -.->|run records| Obs
