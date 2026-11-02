@@ -30,7 +30,7 @@ is numeric; model-backed evaluation would shift the bottleneck to inference.
   word "better" but adds computation and requires paired scores; a raw difference is free but
   unfalsifiable. The reference reports the test, the p-value, and an effect size.
 - **Threads vs processes.** Here threads help, because the numeric bootstrap releases the
-  global interpreter lock, the opposite of the pure-Python services in this portfolio. The
+  global interpreter lock, the opposite of the CPU-bound Python services in this portfolio. The
   right unit of scaling depends on the workload, which the stress benchmark makes visible.
 - **Deterministic seeds vs fresh randomness.** Seeding makes results reproducible and
   cacheable at the cost of exploring one resampling draw; the seed is a request parameter.
