@@ -1,0 +1,67 @@
+# Evaluation Harness
+
+> A from-scratch evaluation and benchmarking framework for large language models and agents.
+
+Languages: Python. License: MIT. Source: https://github.com/adeoluo/evaluation-harness
+
+## Docs
+
+- [README](https://github.com/adeoluo/evaluation-harness/blob/main/README.md): motivation, architecture, results, quickstart, usage, design decisions, testing, responsible ai, limitations, roadmap
+- [AGENTS.md](https://github.com/adeoluo/evaluation-harness/blob/main/AGENTS.md): layout, commands and conventions for changing the code
+- [Architecture diagram](https://github.com/adeoluo/evaluation-harness/blob/main/docs/architecture/architecture.mmd): Mermaid source of the component diagram
+- [End-to-End Case Study - Is Model A Really Better Than Model B?](https://github.com/adeoluo/evaluation-harness/blob/main/docs/CASE_STUDY.md)
+- [Data Card - Evaluation Harness](https://github.com/adeoluo/evaluation-harness/blob/main/docs/DATA_CARD.md)
+- [Definition of Done](https://github.com/adeoluo/evaluation-harness/blob/main/docs/DEFINITION_OF_DONE.md)
+- [Evaluation Report - Evaluation Harness](https://github.com/adeoluo/evaluation-harness/blob/main/docs/EVALUATION_REPORT.md)
+- [System Card - Evaluation Harness](https://github.com/adeoluo/evaluation-harness/blob/main/docs/MODEL_CARD.md)
+- [Operations Guide - Evaluation Harness](https://github.com/adeoluo/evaluation-harness/blob/main/docs/OPERATIONS.md)
+- [Scaling and Design Tradeoffs - Evaluation Harness](https://github.com/adeoluo/evaluation-harness/blob/main/docs/SCALING.md)
+- [Threat Model - Evaluation Harness](https://github.com/adeoluo/evaluation-harness/blob/main/docs/THREAT_MODEL.md)
+- [ADR-0001: Record architecture decisions](https://github.com/adeoluo/evaluation-harness/blob/main/docs/adr/0001-record-architecture-decisions.md)
+- [ADR-0002: Bootstrap confidence intervals for reported metrics](https://github.com/adeoluo/evaluation-harness/blob/main/docs/adr/0002-bootstrap-confidence-intervals.md)
+- [ADR-0003: N-gram containment for contamination detection](https://github.com/adeoluo/evaluation-harness/blob/main/docs/adr/0003-ngram-containment-for-contamination.md)
+- [ADR-NNNN: <short title>](https://github.com/adeoluo/evaluation-harness/blob/main/docs/adr/template.md)
+- [Changelog](https://github.com/adeoluo/evaluation-harness/blob/main/CHANGELOG.md): release history
+
+## Source
+
+- [src/evaluation_harness/__init__.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/__init__.py): Evaluation Harness - a framework for evaluating language models.
+- [src/evaluation_harness/caching.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/caching.py): A caching wrapper for models.
+- [src/evaluation_harness/cli.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/cli.py): Command-line interface for running evaluations.
+- [src/evaluation_harness/contamination.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/contamination.py): N-gram contamination detection.
+- [src/evaluation_harness/core/__init__.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/core/__init__.py): Core abstractions for the evaluation harness.
+- [src/evaluation_harness/core/example.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/core/example.py): The :class:`Example`: a single, immutable evaluation instance.
+- [src/evaluation_harness/core/grader.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/core/grader.py): The :class:`Grader`: scores a model prediction against an example.
+- [src/evaluation_harness/core/model.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/core/model.py): The :class:`Model`: any system that produces a prediction for an example.
+- [src/evaluation_harness/core/result.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/core/result.py): Result containers produced by a :class:`~evaluation_harness.core.runner.Runner`.
+- [src/evaluation_harness/core/runner.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/core/runner.py): The :class:`Runner`: executes a model over a task and collects results.
+- [src/evaluation_harness/core/task.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/core/task.py): The :class:`Task`: a named benchmark pairing examples with a grader.
+- [src/evaluation_harness/graders/__init__.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/__init__.py): Built-in graders.
+- [src/evaluation_harness/graders/choice.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/choice.py): Grader for multiple-choice tasks.
+- [src/evaluation_harness/graders/collection.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/collection.py): Graders for set-valued and list-valued answers.
+- [src/evaluation_harness/graders/composite.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/composite.py): Graders that combine other graders.
+- [src/evaluation_harness/graders/exact_match.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/exact_match.py): Exact-match grader with configurable normalization.
+- [src/evaluation_harness/graders/f1.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/f1.py): Token-level F1 grader for extractive and short-answer tasks.
+- [src/evaluation_harness/graders/fuzzy.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/fuzzy.py): Fuzzy string grader based on edit distance.
+- [src/evaluation_harness/graders/includes.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/includes.py): Grader that checks whether the target appears within the prediction.
+- [src/evaluation_harness/graders/json_grader.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/json_grader.py): Graders for structured (JSON) model output.
+- [src/evaluation_harness/graders/model_graded.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/model_graded.py): Model-graded (rubric) grading.
+- [src/evaluation_harness/graders/normalization.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/normalization.py): Text normalization shared across string-based graders.
+- [src/evaluation_harness/graders/numeric.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/numeric.py): Grader for numeric answers with absolute or relative tolerance.
+- [src/evaluation_harness/graders/regex_match.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/regex_match.py): Grader that matches the prediction against a regular expression.
+- [src/evaluation_harness/graders/rouge.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/graders/rouge.py): ROUGE-L grader for summary and long-answer overlap.
+- [src/evaluation_harness/models/__init__.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/models/__init__.py): Built-in models and a small registry for constructing them by name.
+- [src/evaluation_harness/models/entailment_heuristic.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/models/entailment_heuristic.py): A transparent heuristic for the entailment task.
+- [src/evaluation_harness/models/heuristics.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/models/heuristics.py): Transparent heuristic baselines for the bundled tasks.
+- [src/evaluation_harness/models/providers.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/models/providers.py): Optional adapters for frontier model providers.
+- [src/evaluation_harness/models/stub.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/models/stub.py): Deterministic, offline models.
+- [src/evaluation_harness/observability.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/observability.py): In-process request metrics for the HTTP service.
+- [src/evaluation_harness/persistence.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/persistence.py): Persisting and reloading evaluation runs.
+- [src/evaluation_harness/regression.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/regression.py): Regression detection between two evaluation runs.
+- [src/evaluation_harness/reporting.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/reporting.py): Rendering evaluation results as text tables and JSON.
+- [src/evaluation_harness/reporting_ext.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/reporting_ext.py): Markdown and HTML reports, plus error analysis.
+- [src/evaluation_harness/service.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/service.py): A standard-library HTTP service exposing the evaluation harness.
+- [src/evaluation_harness/significance.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/significance.py): Statistical significance testing for model comparisons.
+- [src/evaluation_harness/statistics.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/statistics.py): Statistical aggregation for evaluation scores.
+- [src/evaluation_harness/tasks/__init__.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/tasks/__init__.py): Built-in tasks and a small registry for loading them by name.
+- [src/evaluation_harness/tasks/arithmetic.py](https://github.com/adeoluo/evaluation-harness/blob/main/src/evaluation_harness/tasks/arithmetic.py): The bundled ``arithmetic`` task: numeric-answer word problems.
