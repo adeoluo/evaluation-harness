@@ -1,4 +1,4 @@
-"""A dependency-free HTTP service exposing the evaluation harness.
+"""A standard-library HTTP service exposing the evaluation harness.
 
 The service evaluates built-in models on built-in tasks and compares two models
 with a significance test, returning error-barred metrics. A pure handler is
