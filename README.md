@@ -215,6 +215,16 @@ request, error, and latency metrics in Prometheus text format). See the
 and the [case study](docs/CASE_STUDY.md) on defending the claim that one model is better than
 another.
 
+### Demos
+
+Recorded from real runs with [vhs](https://github.com/charmbracelet/vhs); each tape is in `docs/demo/`.
+
+Two models on the same task, then the arithmetic task.
+
+<p align="center">
+  <img src="docs/demo/compare.gif" alt="Two models on the same task, then the arithmetic task" width="860">
+</p>
+
 ## Design decisions
 
 - **Bootstrap intervals, not the normal approximation.** Evaluation scores are bounded
