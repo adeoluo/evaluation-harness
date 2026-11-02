@@ -225,6 +225,12 @@ Two models on the same task, then the arithmetic task.
   <img src="docs/demo/compare.gif" alt="Two models on the same task, then the arithmetic task" width="860">
 </p>
 
+The HTTP service comparing two models on the same task with a paired test.
+
+<p align="center">
+  <img src="docs/demo/http.gif" alt="The HTTP service comparing two models on the same task with a paired test" width="860">
+</p>
+
 ## Design decisions
 
 - **Bootstrap intervals, not the normal approximation.** Evaluation scores are bounded
