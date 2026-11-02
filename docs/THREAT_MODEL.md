@@ -18,7 +18,7 @@
 | Judge manipulation | Prediction text crafted to steer a model-graded verdict | Wrong scores | Defensive verdict parsing; validate judge against human labels; prefer rule-based graders where possible |
 | Unsafe expression evaluation | Arithmetic solver parsing model/task text | Code execution | Expressions are parsed to an AST and evaluated with a fixed operator allow-list; `eval` is never used |
 | Secret leakage | API keys in logs or reports | Credential compromise | Keys read from environment only; never logged; `.env` is git-ignored |
-| Supply-chain compromise | Malicious dependency | Code execution | Minimal dependencies (numpy core); pinned lockfile; Dependabot; CodeQL |
+| Supply-chain compromise | Malicious dependency | Code execution | Runtime packages (numpy) and development tools pinned in `uv.lock`; CodeQL in continuous integration |
 | Resource exhaustion | Very large task or corpus | Memory / time blowup | Deterministic, bounded bundled tasks; contamination reference set size is the documented cost |
 
 ## Residual risk
