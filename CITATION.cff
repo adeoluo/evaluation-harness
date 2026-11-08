@@ -1,10 +1,22 @@
 cff-version: 1.2.0
-message: "If you use this work, please cite it."
+message: "If you use this software, please cite it as below."
+type: software
 title: "Evaluation Harness"
+abstract: "An evaluation and benchmarking framework for language models and agents, built from scratch: pluggable tasks and graders, bootstrap confidence intervals, significance testing, and contamination checks."
 authors:
   - family-names: "Ogunnoiki"
     given-names: "Adeolu"
-version: 0.1.0
-date-released: 2026-01-01
+version: "0.1.0"
+date-released: "2026-11-02"
 license: MIT
+repository-code: "https://github.com/adeoluo/evaluation-harness"
 url: "https://github.com/adeoluo/evaluation-harness"
+keywords:
+  - "benchmarking"
+  - "evaluation"
+  - "from-scratch"
+  - "llm-evaluation"
+  - "llmops"
+  - "machine-learning"
+  - "python"
+  - "statistics"
