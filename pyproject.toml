@@ -22,10 +22,10 @@ dependencies = [
 # Provider adapters are optional; the framework runs fully offline without them.
 # install with: uv sync --extra openai  (or) --extra anthropic
 openai = [
-    "openai>=1.0",
+    "openai>=3.46",
 ]
 anthropic = [
-    "anthropic>=0.39",
+    "anthropic>=2.6",
 ]
 
 [project.scripts]
