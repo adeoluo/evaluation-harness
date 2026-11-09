@@ -1,6 +1,6 @@
 [project]
 name = "evaluation-harness"
-version = "0.1.0"
+version = "0.1.1"
 description = "A from-scratch evaluation and benchmarking framework for large language models and agents."
 readme = "README.md"
 requires-python = ">=3.12"

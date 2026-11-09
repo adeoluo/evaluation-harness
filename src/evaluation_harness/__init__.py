@@ -18,7 +18,7 @@ from evaluation_harness.core import (
 )
 from evaluation_harness.statistics import Aggregate, bootstrap_aggregate
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "Aggregate",
