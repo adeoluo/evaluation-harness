@@ -54,6 +54,27 @@ jobs:
           name: coverage
           path: coverage.xml
 
+  scipy-parity:
+    name: statistics checked against SciPy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Install dependencies and SciPy
+        run: uv sync --all-extras --dev --group validation
+
+      # Without SciPy this file is skipped, so the README's parity claim is gated here.
+      - name: Parity with scipy.stats
+        run: uv run pytest tests/test_scipy_parity.py -v -rs --no-cov -p no:cacheprovider
+
   build:
     name: build (package + image)
     runs-on: ubuntu-latest

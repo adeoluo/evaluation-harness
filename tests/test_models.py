@@ -131,3 +131,12 @@ def test_anthropic_request_sends_no_sampling_parameters(monkeypatch: pytest.Monk
     assert sent["model"] == "claude-sonnet-4-20250514"
     assert sent["max_tokens"] == 2048
     assert not {"temperature", "top_p", "top_k"} & sent.keys()
+
+
+def test_oracle_model_scores_perfectly_on_every_task() -> None:
+    from evaluation_harness.core.runner import Runner
+    from evaluation_harness.tasks import available_tasks, load_task
+
+    assert build_model("oracle").generate(Example(input="q", target="gold")) == "gold"
+    for name in available_tasks():
+        assert Runner().run(build_model("oracle"), load_task(name)).accuracy().mean == 1.0, name

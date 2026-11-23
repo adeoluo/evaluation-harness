@@ -90,9 +90,9 @@ The measurement toolkit, all offline and from scratch:
 | arithmetic | `arithmetic-solver` | **100.0% +/- 0.0%** | 60 |
 | arithmetic | `constant-zero` (baseline) | 0.0% +/- 0.0% | 60 |
 | sentiment | `keyword-sentiment` | **91.7% +/- 7.3%** | 48 |
-| sentiment | majority-class (baseline) | 50.0% +/- 14.6% | 48 |
+| sentiment | `constant-positive` (majority-class baseline) | 50.0% +/- 14.6% | 48 |
 | entailment | `overlap-entailment` | **50.0% +/- 16.7%** | 30 |
-| factual_qa | oracle (F1 upper bound) | **100.0% +/- 0.0%** | 25 |
+| factual_qa | `oracle` (returns the reference answer; checks the grader) | **100.0% +/- 0.0%** | 25 |
 
 The `compare` command additionally reports significance. For example,
 `keyword-sentiment` versus the majority baseline on sentiment: **p < 0.0001**, Cohen's

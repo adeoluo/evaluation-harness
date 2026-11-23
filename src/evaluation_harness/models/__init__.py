@@ -1,6 +1,6 @@
 """Built-in models and a small registry for constructing them by name.
 
-Deterministic models (``constant``, ``echo``) and transparent heuristics
+Deterministic models (``constant``, ``echo``, ``oracle``) and transparent heuristics
 (``arithmetic-solver``, ``keyword-sentiment``) run fully offline. Provider adapters
 (``openai``, ``anthropic``) are available when their extra is installed.
 """
@@ -16,10 +16,11 @@ from evaluation_harness.models.heuristics import (
     KeywordSentimentModel,
 )
 from evaluation_harness.models.providers import AnthropicModel, OpenAIModel
-from evaluation_harness.models.stub import ConstantModel, EchoModel
+from evaluation_harness.models.stub import ConstantModel, EchoModel, OracleModel
 
 _BUILDERS: dict[str, Callable[[], Model]] = {
     "echo": EchoModel,
+    "oracle": OracleModel,
     "arithmetic-solver": ArithmeticSolverModel,
     "keyword-sentiment": KeywordSentimentModel,
     "overlap-entailment": OverlapEntailmentModel,
@@ -56,6 +57,7 @@ __all__ = [
     "EchoModel",
     "KeywordSentimentModel",
     "OpenAIModel",
+    "OracleModel",
     "OverlapEntailmentModel",
     "available_models",
     "build_model",

@@ -20,7 +20,7 @@
 | arithmetic | `arithmetic-solver` | **100.0% +/- 0.0%** | 60 | +100.0 |
 | arithmetic | `constant-zero` (baseline) | 0.0% +/- 0.0% | 60 | - |
 | sentiment | `keyword-sentiment` | **91.7% +/- 7.3%** | 48 | +41.7 |
-| sentiment | majority-class (baseline) | 50.0% +/- 14.6% | 48 | - |
+| sentiment | `constant-positive` (majority-class baseline) | 50.0% +/- 14.6% | 48 | - |
 
 Reproduce:
 

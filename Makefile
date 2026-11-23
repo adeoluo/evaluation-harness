@@ -26,7 +26,11 @@ coverage: ## Tests with coverage gate
 	uv run pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 
 evaluation: ## Reproduce the results table
-	uv run python -m evaluation_harness.evaluation
+	@for pair in arithmetic-solver:arithmetic constant-zero:arithmetic keyword-sentiment:sentiment \
+		constant-positive:sentiment overlap-entailment:entailment oracle:factual_qa; do \
+		uv run python -m evaluation_harness run --model $${pair%%:*} --task $${pair##*:} | tail -1 || exit 1; \
+	done
+	@uv run python -m evaluation_harness compare --model-a keyword-sentiment --model-b constant-positive --task sentiment
 
 run: ## Run the application entrypoint
 	uv run python -m evaluation_harness

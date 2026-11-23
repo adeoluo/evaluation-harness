@@ -31,3 +31,14 @@ class EchoModel:
 
     def generate(self, example: Example) -> str:
         return example.input
+
+
+@dataclass(frozen=True)
+class OracleModel:
+    """Returns the reference answer. It checks a task's grader, not a model: a correct
+    grader must give it a perfect score, so it is the upper bound of every task."""
+
+    name: str = "oracle"
+
+    def generate(self, example: Example) -> str:
+        return example.target
