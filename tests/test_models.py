@@ -66,7 +66,7 @@ def test_registry_rejects_unknown_model() -> None:
 
 
 def test_provider_adapter_name() -> None:
-    assert OpenAIModel(model="gpt-6.1-sol").name == "gpt-6.1-sol"
+    assert OpenAIModel(model="gpt-4o").name == "gpt-4o"
 
 
 def test_require_raises_when_sdk_missing(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -118,7 +118,7 @@ def test_openai_request_turns_reasoning_off_for_repeatable_output(
     model = providers.OpenAIModel()
     assert model.generate(Example(input="p", target="t")) == "ok"
     sent = chat.calls[0]
-    assert sent["model"] == "gpt-6-luna"
+    assert sent["model"] == "gpt-4o-mini"
     assert sent["reasoning_effort"] == "none"
     assert sent["temperature"] == 0.0
 
@@ -128,6 +128,6 @@ def test_anthropic_request_sends_no_sampling_parameters(monkeypatch: pytest.Monk
     model = providers.AnthropicModel()
     assert model.generate(Example(input="p", target="t")) == "ok"
     sent = messages.calls[0]
-    assert sent["model"] == "claude-sonnet-5-5"
+    assert sent["model"] == "claude-sonnet-4-20250514"
     assert sent["max_tokens"] == 2048
     assert not {"temperature", "top_p", "top_k"} & sent.keys()

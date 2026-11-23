@@ -28,12 +28,12 @@ class OpenAIModel:
     """Chat-completion adapter for OpenAI models.
 
     Args:
-        model: The model identifier (for example ``gpt-6-luna``).
+        model: The model identifier (for example ``gpt-4o-mini``).
         system_prompt: Optional system message prepended to every request.
         temperature: Sampling temperature; ``0.0`` keeps evaluations near-deterministic.
     """
 
-    model: str = "gpt-6-luna"
+    model: str = "gpt-4o-mini"
     system_prompt: str | None = None
     temperature: float = 0.0
     # Current OpenAI models reason by default and then reject temperature; "none" turns
@@ -66,7 +66,7 @@ class OpenAIModel:
 class AnthropicModel:
     """Messages-API adapter for Anthropic Claude models."""
 
-    model: str = "claude-sonnet-5-5"
+    model: str = "claude-sonnet-4-20250514"
     system_prompt: str | None = None
     # Includes adaptive thinking tokens on Claude 5 models. No temperature: the current
     # Messages API and the Claude 5 models accept only the default sampling settings.
