@@ -15,7 +15,7 @@
 
 > **Evidence level: reference validated.** The statistics are checked against SciPy. The bundled tasks use heuristic models, not real LLMs. Not independently reproduced and not used in production. [What the levels mean](https://github.com/adeoluo#evidence-levels).
 
-## In plain English
+## Summary
 
 When you test an AI model, a higher score may be real or may be luck. This toolkit runs the
 tests and tells you which.
