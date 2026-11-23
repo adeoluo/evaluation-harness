@@ -13,6 +13,8 @@
 
 ---
 
+> **Evidence level: reference validated.** The statistics are checked against SciPy. The bundled tasks use heuristic models, not real LLMs. Not independently reproduced and not used in production. [What the levels mean](https://github.com/adeoluo#evidence-levels).
+
 ## Motivation
 
 A single accuracy number is not a result; its uncertainty is. Most model comparisons
