@@ -15,6 +15,20 @@
 
 > **Evidence level: reference validated.** The statistics are checked against SciPy. The bundled tasks use heuristic models, not real LLMs. Not independently reproduced and not used in production. [What the levels mean](https://github.com/adeoluo#evidence-levels).
 
+## In plain English
+
+When you test an AI model, a higher score may be real or may be luck. This toolkit runs the
+tests and tells you which.
+
+- **16 ways to grade an answer,** from exact match to fuzzy and pattern matching.
+- **Every score comes with an error bar,** and two models are compared with proper
+  significance tests.
+- **The statistics match SciPy.** Its effect-size and McNemar test results agree with the
+  standard scientific library to about 16 decimal places.
+
+**Where it falls short:** the bundled example tasks use simple rule-based stand-ins, not real
+language models. Adapters for OpenAI and Anthropic models are included but optional.
+
 ## Motivation
 
 A single accuracy number is not a result; its uncertainty is. Most model comparisons
