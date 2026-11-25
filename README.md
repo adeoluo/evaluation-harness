@@ -13,7 +13,7 @@
 
 ---
 
-> **Evidence level: reference validated.** The statistics are checked against SciPy, the standard Python library for scientific computing. The bundled tasks use heuristic models (simple rule-based programs), not real LLMs. No one else has reproduced the results, and the framework is not used in production. [What the levels mean](https://github.com/adeoluo#evidence-levels).
+> **Evidence level: reference validated.** The statistics are checked against SciPy, the standard Python library for scientific computing. The bundled tasks use heuristic models (simple rule-based programs), not real LLMs. No one else has reproduced the results, and the framework is not used in production.
 
 ## Highlights
 
